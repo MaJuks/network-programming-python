@@ -1,0 +1,51 @@
+import rsa
+import argparse
+
+#rsa_genkeys.py -u USER -s SIZE -v
+
+def generate_keys(user, keysize):
+    #Utilize estes nomes de arquivo para armazenar as chaves
+    FILE_PUBLIC_KEY = f'{user}_public_key.pem'
+    FILE_PRIVATE_KEY = f'{user}_private_key.pem'
+    #Inclua aqui o código para geração de chaves
+    (publicKey, privateKey) = rsa.newkeys(keysize)
+    with open(FILE_PUBLIC_KEY, 'wb') as x:
+        x.write(publicKey.save_pkcs1('PEM'))
+    with open(FILE_PRIVATE_KEY, 'wb') as y:
+        y.write(privateKey.save_pkcs1('PEM'))        
+    pass
+
+if __name__ == '__main__':
+    #Default values
+    USER='user'
+    KEYSIZE = 1024
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-u', '--user',
+        help='Usuário a ter o nome no arquivo da chave.',
+        type=str
+        )
+    parser.add_argument('-s', '--keysize',
+        help='Tamanho da chave a ser utilizado.',
+        type=int,
+        choices=[512, 1024, 2048, 4096]
+        )
+    parser.add_argument('-v', '--verbose',
+        help='Apresenta informações sobre a operação',
+        action='store_true'
+        )
+
+    args = parser.parse_args()
+
+    if args.user:
+        USER=args.user
+    if args.keysize:
+        KEYSIZE = args.keysize
+
+    if args.verbose:
+        print(f'FILE_PUBLIC_KEY: {USER}_public_key.pem')
+        print(f'FILE_PRIVATE_KEY: {USER}_private_key.pem')
+        print(f'KEYSIZE: {KEYSIZE}')
+
+    generate_keys(USER,KEYSIZE)
